@@ -1,0 +1,34 @@
+services:
+  postgres-fragment:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB : fragment_db
+    ports:
+      - "5432:5432"
+    command: >
+      postgres
+      -c shared_buffers=16MB
+      -c max_wal_size=1GB
+      -c checkpoint_timeout=5min
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U root -d fragment_db"]
+      interval: 2s
+      timeout: 5s
+      retries: 5
+
+  uuid-benchmark:
+    build: .
+    image: uuidv4-fragmentation-benchmark
+    tty: true
+    depends_on:
+      postgres-fragment:
+        condition: service_healthy
+    environment:
+      DB_HOST: postgres-fragment
+      DB_PORT: 5432
+      DB_USER: root
+      DB_PASSWORD: password
+      DB_NAME: fragment_db
+

@@ -1,0 +1,6 @@
+fastuuid7==0.6.1
+markdown-it-py==4.3.0
+mdurl==0.1.2
+psycopg2-binary==2.9.13
+Pygments==2.21.0
+rich==15.0.0
